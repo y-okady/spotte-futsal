@@ -1,0 +1,28 @@
+{
+    "mapping": {
+      "courts": {
+        "properties": {
+          "date": {
+            "type": "date",
+            "format": "date"
+          },
+          "spot": {
+            "type": "keyword"
+          },
+          "vacancies": {
+            "type": "nested",
+            "properties": {
+              "begin": {
+                "type": "date",
+                "format": "date_hour_minute_second"
+              },
+              "end": {
+                "type": "date",
+                "format": "date_hour_minute_second"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
