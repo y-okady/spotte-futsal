@@ -1,5 +1,4 @@
 const dateformat = require('dateformat');
-dateformat.masks.dateHourMinuteSecond = 'yyyy-mm-dd"\'T\'"HH:MM:ss';
 
 class Crawler {
   constructor(spot) {
@@ -56,7 +55,8 @@ class Crawler {
   async crawlOne(browser, url) {
     const page = await browser.newPage();
     await page.goto(url, {
-      timeout: 10000,
+      timeout: 30000,
+      waitUntil: 'networkidle0',
     }).catch(error => {
       // エラーが出ても無視する
       console.log(`failed to load ${url}.`)
