@@ -21,6 +21,11 @@ provider:
   name: aws
   runtime: nodejs8.10
   region: ap-northeast-1
+  environment:
+    ES_HOST: ${env:ES_HOST}
+    ES_USER: ${env:ES_USER}
+    ES_PASS: ${env:ES_PASS}
+    TZ: Asia/Tokyo
 
 # you can overwrite defaults here
 #  stage: dev
@@ -64,8 +69,8 @@ functions:
     handler: handler.search
     events:
       - http:
-        path: search
-        method: get
+          path: search
+          method: get
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events

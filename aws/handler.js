@@ -36,14 +36,29 @@ module.exports.search = async (event, context, callback) => {
     if (!params.hasOwnProperty(key)) {
       throw new Error(`missing parameter: ${key}`);
     }
+    params[key] = Number(params[key]);
   });
   const begin = new Date(params.year, params.month - 1, params.day, params.hours, params.minutes);
   const end = new Date(begin.getFullYear(), begin.getMonth(), begin.getDate(), begin.getHours() + params.hour, begin.getMinutes());
-  new Searcher(createElasticsearchClient()).search(begin, end)
+  await new Searcher(createElasticsearchClient()).search(begin, end)
     .then(resp => {
-      console.log(resp);
-    })
+      const hits = resp.hits.hits.map(spot => {
+        return {
+          spot: spot._source.spot,
+          courts: spot.inner_hits.courts.hits.hits.map(court => {
+            return court._source.court;
+          }),
+        };
+      });
+      console.log(hits);
+      callback(null, {
+        statusCode: 200,
+        body: JSON.stringify(hits),
+      })})
     .catch(err => {
-      console.error(err);
-    });
+      console.log(err.message);
+      callback(null, {
+        statusCode: 400,
+        body: err.message
+      })});
 };
