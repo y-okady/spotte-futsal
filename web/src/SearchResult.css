@@ -1,0 +1,13 @@
+.SearchResult {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ccc;
+  padding: 16px;
+}
+
+.SearchResult-item {
+  display: block;
+  margin: 16px;
+}
