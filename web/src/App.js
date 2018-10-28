@@ -6,9 +6,10 @@ import SearchResult from './SearchResult';
 import axios from 'axios';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFutbol } from '@fortawesome/free-solid-svg-icons'
+import { faFutbol, faSearch } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faFutbol)
+library.add(faSearch)
 
 const SEARCH_API_URL = 'https://qxkhhtc4d0.execute-api.ap-northeast-1.amazonaws.com/dev/search';
 

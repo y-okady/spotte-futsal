@@ -1,0 +1,20 @@
+.SearchForm {
+  text-align: center;
+  padding: 16px;
+}
+
+.SearchForm-title {
+  font-size: 16px;
+}
+
+.SearchForm-inputs {
+  padding-bottom: 16px;
+}
+
+.SearchForm-inputs > * {
+  margin: 16px;
+}
+
+.SearchForm-button svg {
+  margin-right: 8px;
+}
