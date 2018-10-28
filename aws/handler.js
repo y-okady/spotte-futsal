@@ -32,14 +32,13 @@ module.exports.crawl = async (event, context, callback) => {
 module.exports.search = async (event, context, callback) => {
   console.log('request: ' + JSON.stringify(event));
   const params = event.queryStringParameters;
-  ['year', 'month', 'day', 'hours', 'minutes', 'hour'].forEach(key => {
+  ['date', 'time', 'hour'].forEach(key => {
     if (!params.hasOwnProperty(key)) {
       throw new Error(`missing parameter: ${key}`);
     }
-    params[key] = Number(params[key]);
   });
-  const begin = new Date(params.year, params.month - 1, params.day, params.hours, params.minutes);
-  const end = new Date(begin.getFullYear(), begin.getMonth(), begin.getDate(), begin.getHours() + params.hour, begin.getMinutes());
+  const begin = new Date(`${params.date} ${params.time}`);
+  const end = new Date(begin.getFullYear(), begin.getMonth(), begin.getDate(), begin.getHours() + Number(params.hour), begin.getMinutes());
   await new Searcher(createElasticsearchClient()).search(begin, end)
     .then(resp => {
       const hits = resp.hits.hits.map(spot => {
