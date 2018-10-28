@@ -1,69 +1,89 @@
 import React, { Component } from 'react';
-import { TextField, Button } from '@material-ui/core';
 import './SearchForm.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import moment from 'moment';
 
 class SearchForm extends Component {
   constructor(props) {
     super(props);
-    const today = new Date();
     this.state = {
-      date: `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`,
-      time: '19:00',
-      hour: 2,
+      datetime: moment().add(1, 'days').hour(19).minute(0),
+      hour: '2',
     };
   }
 
   handleSubmit = event => {
     event.preventDefault();
-    const { date, time, hour } = this.state;
-    this.props.onSubmit({ date, time, hour })
+    this.props.onSubmit({
+      date: this.state.datetime.format('YYYY-MM-DD'),
+      time: this.state.datetime.format('HH:mm'),
+      hour: this.state.hour,
+    })
+    this.setState({
+      height: '0px',
+    });
   }
 
-  handleChange = (name, event) => {
+  handleHourChange = event => {
     this.setState({
-      [name]: event.target.value,
+      hour: event.target.value,
     })
+  }
+
+  handleDateTimeChange = event => {
+    this.setState({
+      datetime: event
+    })
+  }
+
+  componentWillMount() {
+    this.setState({
+      height: (window.innerHeight - 60) + 'px',
+    });
   }
 
   render() {
     return (
-      <div className="SearchForm">
-        <h2 className="SearchForm-title">フットサルコート空き時間検索</h2>
+      <div className="SearchForm" style={{minHeight: this.state.height}}>
+        <h2 className="SearchForm-title" style={{display: this.state.titleDisplay}}>フットサルコート空き時間検索</h2>
         <form className="SearchForm-form" onSubmit={event => this.handleSubmit(event)}>
           <div className="SearchForm-inputs">
-            <TextField
-              id="date"
-              type="date"
-              value={this.state.date}
-              onChange={event => this.handleChange('date', event)}
-            />
-            <TextField
-              id="time"
-              type="time"
-              value={this.state.time}
-              onChange={event => this.handleChange('time', event)}
+            <DatePicker
+              selected={this.state.datetime}
+              onChange={this.handleDateTimeChange}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeInterval={30}
+              dateFormat="YYYY-MM-DD HH:mm"
+              timeCaption="開始"
             />
             <span>から</span>
-            <TextField
+            <select
               id="hour"
-              type="number"
+              onChange={this.handleHourChange}
               value={this.state.hour}
-              style={{width: 30}}
-              onChange={event => this.handleChange('hour', event)}
-            />
-            <span>時間</span>
+            >
+              <option value="1">1時間</option>
+              <option value="1.5">1時間半</option>
+              <option value="2">2時間</option>
+              <option value="2.5">2時間半</option>
+              <option value="3">3時間</option>
+              <option value="4">4時間</option>
+              <option value="5">5時間</option>
+              <option value="6">6時間</option>
+            </select>
+            <span>予約できるコート</span>
           </div>
-          <div className="searchForm-buttons">
-            <Button
-              variant="contained"
-              color="primary"
+          <div className="SearchForm-buttons">
+            <button
               type="submit"
               className="SearchForm-button"
             >
-              <FontAwesomeIcon icon="search" size="lg" />
+              <FontAwesomeIcon icon="search" size="1x" />
               検索する
-            </Button>
+            </button>
           </div>
         </form>
       </div>

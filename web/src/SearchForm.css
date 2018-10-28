@@ -1,20 +1,56 @@
 .SearchForm {
-  text-align: center;
-  padding: 32px;
+  background-color: #61C359;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 15px;
+  transition: min-height 0.8s;
+  overflow: hidden;
 }
 
 .SearchForm-title {
-  font-size: 16px;
-  padding: 0;
-  margin: 0 0 24px 0;
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
 }
 
 .SearchForm-inputs {
-  padding-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.SearchForm-inputs > * {
-  margin: 16px;
+.SearchForm-inputs input {
+  font-size: 1.5rem;
+  padding: 5px;
+}
+
+.SearchForm-inputs span {
+  margin: 0 10px;
+}
+
+.SearchForm-inputs select {
+  font-size: 1.5rem;
+  padding: 5px;
+}
+
+.SearchForm-buttons {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.SearchForm-button {
+  color: rgb(38, 120, 228);
+  background-color: #fff;
+  border: none;
+  font-size: 1.5rem;
+  border-radius: .3rem;
+  padding: .3rem 1.5rem;
+  cursor: pointer;
 }
 
 .SearchForm-button svg {

@@ -3,11 +3,26 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #ccc;
-  padding: 16px;
+  background-color: #f0f0f0;
 }
 
 .SearchResult-item {
   display: block;
-  margin: 16px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2rem 8rem;
+}
+
+.SearchResult-item:nth-child(2n+1) {
+  background-color: #fff;
+}
+
+.SearchResult-spot {
+  margin: 0 auto 0.5rem 0;
+}
+
+.SearchResult-courts {
+  color: #888;
+  font-size: 0.9rem;
 }
