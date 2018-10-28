@@ -30,7 +30,6 @@ module.exports.crawl = async (event, context, callback) => {
 };
 
 module.exports.search = async (event, context, callback) => {
-  console.log('request: ' + JSON.stringify(event));
   const params = event.queryStringParameters;
   ['date', 'time', 'hour'].forEach(key => {
     if (!params.hasOwnProperty(key)) {
@@ -49,9 +48,12 @@ module.exports.search = async (event, context, callback) => {
           }),
         };
       });
-      console.log(hits);
       callback(null, {
         statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': true,
+        },
         body: JSON.stringify(hits),
       })})
     .catch(err => {
