@@ -63,10 +63,12 @@ provider:
 functions:
   crawl:
     handler: handler.crawl
+    timeout: 900
     events:
       - schedule: rate(6 hours)
   search:
     handler: handler.search
+    timeout: 10
     events:
       - http:
           path: search
