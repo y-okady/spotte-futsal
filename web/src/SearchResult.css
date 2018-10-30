@@ -6,39 +6,37 @@
   background-color: #f0f0f0;
 }
 
-.SearchResult-item {
-  display: block;
+.SearchResult-itemOuter {
   width: 100%;
+}
+
+.SearchResult-itemOuter:nth-child(2n+1) {
+  background-color: #fff;
+}
+
+.SearchResult-item {
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
   padding: 2rem 8rem;
 }
 
-.SearchResult-item:nth-child(2n+1) {
-  background-color: #fff;
-}
-
 .SearchResult-spot {
-  margin: 0 auto 0.5rem 0;
+  margin: 0;
 }
 
 .SearchResult-courts {
   color: #888;
   font-size: 0.9rem;
-  margin: 0.5rem 1rem;
 }
 
 .SearchResult-booking {
   font-size: 0.9rem;
-  margin: 0.5rem 1rem;
-}
-
-.SearchResult-map {
-  margin: 0.5rem 1rem;
+  margin: 10px 0;
 }
 
 .SearchResult-map iframe {
-  width: 360px;
-  height: 270px;
+  width: 600px;
+  height: 400px;
   border: none;
 }
