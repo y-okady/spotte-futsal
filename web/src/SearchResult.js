@@ -15,6 +15,14 @@ class SearchResult extends Component {
               <div className="SearchResult-booking">
                 <a href={spot.bookingUrl} target="_blank">コートを予約する</a>
               </div>
+              <div className="SearchResult-map">
+              <iframe
+                width="600"
+                height="450"
+                frameBorder="0"
+                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB1vbtwJx0IRSdjIH6LfnQrU1wxoLHIYwk&q=${spot.spot}`}
+                allowFullScreen />
+              </div>
             </div>
           );
         })}

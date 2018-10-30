@@ -32,3 +32,13 @@
   font-size: 0.9rem;
   margin: 0.5rem 1rem;
 }
+
+.SearchResult-map {
+  margin: 0.5rem 1rem;
+}
+
+.SearchResult-map iframe {
+  width: 360px;
+  height: 270px;
+  border: none;
+}
