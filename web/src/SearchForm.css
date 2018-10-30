@@ -44,13 +44,17 @@
 }
 
 .SearchForm-button {
-  color: rgb(38, 120, 228);
+  color: #1e87f0;
   background-color: #fff;
   border: none;
   font-size: 1.5rem;
   border-radius: .3rem;
   padding: .3rem 1.5rem;
   cursor: pointer;
+}
+
+.SearchForm-button:hover {
+  color: #0f6ecd;
 }
 
 .SearchForm-button svg {

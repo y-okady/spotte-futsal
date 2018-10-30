@@ -25,4 +25,10 @@
 .SearchResult-courts {
   color: #888;
   font-size: 0.9rem;
+  margin: 0.5rem 1rem;
+}
+
+.SearchResult-booking {
+  font-size: 0.9rem;
+  margin: 0.5rem 1rem;
 }

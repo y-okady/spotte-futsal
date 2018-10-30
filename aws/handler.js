@@ -1,7 +1,7 @@
 const launchChrome = require('@serverless-chrome/lambda');
 const CDP = require('chrome-remote-interface');
 const puppeteer = require('puppeteer');
-const SPOTS = require('./spot').SPOTS;
+const { SPOTS, SPOTS_MAP } = require('./spot');
 const elasticsearch = require('elasticsearch');
 const Searcher = require('./searcher').Searcher;
 
@@ -41,11 +41,14 @@ module.exports.search = async (event, context, callback) => {
   await new Searcher(createElasticsearchClient()).search(begin, end)
     .then(resp => {
       const hits = resp.hits.hits.map(spot => {
+        const spotName = spot._source.spot;
         return {
-          spot: spot._source.spot,
+          spot: spotName,
           courts: spot.inner_hits.courts.hits.hits.map(court => {
             return court._source.court;
           }),
+          url: SPOTS_MAP[spotName].url,
+          bookingUrl: SPOTS_MAP[spotName].crawler.getUrl(begin),
         };
       });
       callback(null, {

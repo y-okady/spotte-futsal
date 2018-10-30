@@ -8,8 +8,13 @@ class SearchResult extends Component {
         {this.props.spots.map((spot, index) => {
           return (
             <div key={`spot-${index}`} className="SearchResult-item">
-              <h3 className="SearchResult-spot">{spot.spot}</h3>
-              <span className="SearchResult-courts">{spot.courts.join(', ')}</span>
+              <h3 className="SearchResult-spot">
+                <a href={spot.url} target="_blank">{spot.spot}</a>
+              </h3>
+              <div className="SearchResult-courts">{spot.courts.join(', ')}</div>
+              <div className="SearchResult-booking">
+                <a href={spot.bookingUrl} target="_blank">コートを予約する</a>
+              </div>
             </div>
           );
         })}

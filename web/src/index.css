@@ -10,3 +10,14 @@ body {
   line-height: 1.6;
   font-size: 1em;
 }
+
+a {
+  color: #1e87f0;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:hover {
+  color: #0f6ecd;
+  text-decoration: underline;
+}

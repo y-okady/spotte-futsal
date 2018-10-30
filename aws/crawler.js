@@ -8,6 +8,10 @@ class Crawler {
     this.savedDates = new Set();
   }
 
+  getUrl(date) {
+    throw new Error('Not implemented.');
+  }
+
   getUrls() {
     throw new Error('Not implemented.');
   }
@@ -129,6 +133,10 @@ class VLCMCrawler extends Crawler {
     this.isMonth = Boolean(isMonth);
   }
 
+  getUrl(date) {
+    return `http://www.vlcm.net/rc/pc/index.php?action_CRA01_01do=true&cid=${this.cid}&executeType=selectDate&selectDate=${dateformat(date, 'yyyymmdd')}`;
+  }
+
   getUrls() {
     // 月表示の場合、今日から1ヶ月、4週間後から1ヶ月、8週間後(56日後)から1ヶ月の3画面をチェックする
     // 週表示の場合、今日から1週間、1週間後から1週間、...、8週間後(56日後) から1週間の9画面をチェックする
@@ -137,7 +145,7 @@ class VLCMCrawler extends Crawler {
     return [...Array(rangeMax).keys()].map(x => {
       let date = new Date();
       date.setDate(date.getDate() + x * weeksInterval * 7);
-      return `http://www.vlcm.net/rc/pc/index.php?action_CRA01_01do=true&cid=${this.cid}&executeType=selectDate&selectDate=${dateformat(date, 'yyyymmdd')}`;
+      return this.getUrl(date);
     });
   }
 
