@@ -36,6 +36,8 @@
   padding: 0.4rem 1rem;
   font-size: 1.5rem;
   width: 13rem;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .SearchForm-inputs span {
@@ -52,6 +54,7 @@
   border: 0;
   border-radius: 2rem;
   font-size: 1.5rem;
+  cursor: pointer;
 }
 
 .SearchForm-desc {
@@ -76,10 +79,6 @@
   border-radius: 2rem;
   padding: 0.4rem 1.8rem;
   cursor: pointer;
-}
-
-.SearchForm-button:hover {
-  color: #0f6ecd;
 }
 
 .SearchForm-button svg {

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import './SearchForm.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import DatePicker from 'react-datepicker';
+import 'flatpickr/dist/themes/material_green.css'
+import Flatpickr from 'react-flatpickr';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 
@@ -34,7 +35,7 @@ class SearchForm extends Component {
 
   handleDateTimeChange = event => {
     this.setState({
-      datetime: event
+      datetime: moment(event[0])
     })
   }
 
@@ -50,14 +51,14 @@ class SearchForm extends Component {
         <h2 className="SearchForm-title" style={{display: this.state.titleDisplay}}>フットサルコート空き時間検索</h2>
         <form className="SearchForm-form" onSubmit={event => this.handleSubmit(event)}>
           <div className="SearchForm-inputs">
-            <DatePicker
-              selected={this.state.datetime}
+            <Flatpickr
+              value={this.state.datetime.toDate()}
+              options={{
+                enableTime: true,
+                time_24hr: true,
+                minuteIncrement: 30,
+              }}
               onChange={this.handleDateTimeChange}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeInterval={30}
-              dateFormat="YYYY-MM-DD HH:mm"
-              timeCaption="開始"
             />
             <span>から</span>
             <select
