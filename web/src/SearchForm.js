@@ -74,6 +74,8 @@ class SearchForm extends Component {
               <option value="5">5時間</option>
               <option value="6">6時間</option>
             </select>
+          </div>
+          <div className="SearchForm-desc">
             <span>予約できるコート</span>
           </div>
           <div className="SearchForm-buttons">

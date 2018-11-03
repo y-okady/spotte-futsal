@@ -17,13 +17,13 @@ class SearchResult extends Component {
                   <a href={spot.bookingUrl} target="_blank" rel="noopener noreferrer">コートを予約する</a>
                 </div>
                 <div className="SearchResult-map">
-                <iframe
-                  title="Google Maps"
-                  width="600"
-                  height="450"
-                  frameBorder="0"
-                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB1vbtwJx0IRSdjIH6LfnQrU1wxoLHIYwk&q=${spot.spot}`}
-                  allowFullScreen />
+                  <iframe
+                    title="Google Maps"
+                    width="600"
+                    height="450"
+                    frameBorder="0"
+                    src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB1vbtwJx0IRSdjIH6LfnQrU1wxoLHIYwk&q=${spot.spot}`}
+                    allowFullScreen />
                 </div>
               </div>
             </div>

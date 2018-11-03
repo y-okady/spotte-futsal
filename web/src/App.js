@@ -37,10 +37,12 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <FontAwesomeIcon icon="futbol" size="lg" />
+          <div className="App-logo">
+            <img src={logo} alt="logo" />
+            <FontAwesomeIcon icon="futbol" size="lg" />
+          </div>
+          <SearchForm onSubmit={condition => this.search(condition)}/>
         </header>
-        <SearchForm onSubmit={condition => this.search(condition)}/>
         <SearchResult spots={this.state.spots} />
       </div>
     );

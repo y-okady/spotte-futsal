@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f0f0f0;
+  background-color: #f6f6f6;
 }
 
 .SearchResult-itemOuter {
@@ -15,10 +15,11 @@
 }
 
 .SearchResult-item {
-  max-width: 600px;
+  padding: 2rem 0;
+  width: 72vw;
+  max-width: 720px;
   margin-left: auto;
   margin-right: auto;
-  padding: 2rem 8rem;
 }
 
 .SearchResult-spot {
@@ -32,11 +33,32 @@
 
 .SearchResult-booking {
   font-size: 0.9rem;
-  margin: 10px 0;
+  margin: 0.7rem 0;
+}
+
+.SearchResult-map {
+  position: relative;
+  width: 72vw;
+  height: 48vw;
+  max-width: 720px;
+  max-height: 480px;
+  overflow: hidden;
 }
 
 .SearchResult-map iframe {
-  width: 600px;
-  height: 400px;
+  position: absolute;
   border: none;
+  width: 100%;
+  height: 100%;
+}
+
+@media screen and (max-width: 800px) {
+  .SearchResult-item {
+    width: 90vw;
+  }
+
+  .SearchResult-map {
+    width: 90vw;
+    height: 60vw;
+  }
 }

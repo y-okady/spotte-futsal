@@ -1,13 +1,24 @@
 .App-header {
-  background-color: #61C359;
-  height: 60px;
-  padding: 0 30px;
+  color: #fff;
+  background-color: #399548;
   width: 100%;
+  height: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
 }
 
 .App-logo {
-  height: 25px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.4rem;
+}
+
+.App-logo img {
+  height: 1.7rem;
   margin-right: 5px;
+}
+
+.App-logo svg {
+  color: #444;
 }
