@@ -13,7 +13,7 @@ library.add(faFutbol)
 library.add(faSearch)
 library.add(faSpinner)
 
-const SEARCH_API_URL = 'https://qxkhhtc4d0.execute-api.ap-northeast-1.amazonaws.com/dev/search';
+const SEARCH_API_URL = 'https://s2cjc5s8a0.execute-api.ap-northeast-1.amazonaws.com/prod/search';
 
 class App extends Component {
   constructor(props) {

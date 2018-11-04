@@ -20,6 +20,7 @@ service: spotte-futsal
 provider:
   name: aws
   runtime: nodejs8.10
+  stage: prod
   region: ap-northeast-1
   environment:
     ES_HOST: ${env:ES_HOST}
@@ -65,7 +66,7 @@ functions:
     handler: handler.crawl
     timeout: 900
     events:
-      - schedule: rate(6 hours)
+      - schedule: rate(30 minutes)
   search:
     handler: handler.search
     timeout: 10

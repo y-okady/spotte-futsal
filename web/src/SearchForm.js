@@ -3,7 +3,6 @@ import './SearchForm.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import 'flatpickr/dist/themes/material_green.css'
 import Flatpickr from 'react-flatpickr';
-import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 
 class SearchForm extends Component {
