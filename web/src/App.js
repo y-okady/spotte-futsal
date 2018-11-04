@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.png';
+import logo from './logo.svg';
 import './App.css';
 import SearchForm from './SearchForm';
 import SearchResult from './SearchResult';
@@ -7,6 +7,7 @@ import axios from 'axios';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFutbol, faSearch } from '@fortawesome/free-solid-svg-icons'
+import ReactSVG from 'react-svg'
 
 library.add(faFutbol)
 library.add(faSearch)
@@ -38,8 +39,13 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <div className="App-logo">
-            <img src={logo} alt="logo" />
-            <FontAwesomeIcon icon="futbol" size="lg" />
+            <ReactSVG
+              src={logo}
+              className="App-logo-logo" />
+            <FontAwesomeIcon
+              icon="futbol"
+              size="lg"
+              className="App-logo-icon" />
           </div>
           <SearchForm onSubmit={condition => this.search(condition)}/>
         </header>

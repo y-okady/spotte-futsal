@@ -13,7 +13,8 @@
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-flatpickr": "^3.6.4",
-    "react-scripts": "2.0.5"
+    "react-scripts": "2.0.5",
+    "react-svg": "^6.0.21"
   },
   "scripts": {
     "start": "react-scripts start",

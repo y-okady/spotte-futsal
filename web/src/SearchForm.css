@@ -6,6 +6,8 @@
   transition: min-height 0.8s;
   overflow: hidden;
   height: 100%;
+  padding: 1.5rem 0;
+  box-sizing: border-box;
 }
 
 .SearchForm-form {
@@ -68,7 +70,7 @@
 .SearchForm-buttons {
   display: flex;
   justify-content: center;
-  margin: 2rem 0;
+  margin: 2rem 0 1rem 0;
 }
 
 .SearchForm-button {
