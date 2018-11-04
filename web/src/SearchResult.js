@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
+import Loading from './Loading';
 import './SearchResult.css';
 
 class SearchResult extends Component {
   render() {
     return (
       <div className="SearchResult">
+        {this.props.loading ?
+          <Loading className="SearchResult-loading" /> : null}
+        {!this.props.loading && this.props.spots.length === 0 ? 
+          <div class="SearchResult-noitem">予約できるコートが見つかりません。</div> : null}
         {this.props.spots.map((spot, index) => {
           return (
             <div key={`spot-${index}`} className="SearchResult-itemOuter">

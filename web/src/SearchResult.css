@@ -3,11 +3,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f3f3f3;
+}
+
+.SearchResult-noitem {
+  padding: 2rem;
+}
+
+.SearchResult-loading {
+  padding: 2rem;
 }
 
 .SearchResult-itemOuter {
   width: 100%;
+  background-color: #f3f3f3;
 }
 
 .SearchResult-itemOuter:nth-child(2n+1) {

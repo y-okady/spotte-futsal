@@ -6,11 +6,12 @@ import SearchResult from './SearchResult';
 import axios from 'axios';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFutbol, faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faFutbol, faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
 import ReactSVG from 'react-svg'
 
 library.add(faFutbol)
 library.add(faSearch)
+library.add(faSpinner)
 
 const SEARCH_API_URL = 'https://qxkhhtc4d0.execute-api.ap-northeast-1.amazonaws.com/dev/search';
 
@@ -19,14 +20,22 @@ class App extends Component {
     super(props);
     this.state = {
       spots: [],
+      loading: false,
+      searched: false,
     };
   }
 
   search(condition) {
+    this.setState({
+      spots: [],
+      loading: true,
+    });
     axios.get(SEARCH_API_URL, {params: condition})
       .then(resp => {
         this.setState({
           spots: resp.data,
+          loading: false,
+          searched: true,
         })
       })
       .catch(error => {
@@ -49,7 +58,8 @@ class App extends Component {
           </div>
           <SearchForm onSubmit={condition => this.search(condition)}/>
         </header>
-        <SearchResult spots={this.state.spots} />
+        {this.state.searched ?
+          <SearchResult spots={this.state.spots} loading={this.state.loading} /> : null}
       </div>
     );
   }
