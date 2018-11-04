@@ -8,21 +8,21 @@ const Searcher = require('./searcher').Searcher;
 const createElasticsearchClient = () => {
   return new elasticsearch.Client({
     host: {
-      protocol: 'https',
+      protocol: process.env['ES_PROTOCOL'],
       host: process.env['ES_HOST'],
-      port: 9243,
-      auth: `${process.env['ES_USER']}:${process.env['ES_PASS']}`,
+      port: Number(process.env['ES_PORT']),
+      auth: process.env['ES_USER'] ? `${process.env['ES_USER']}:${process.env['ES_PASS']}`: null,
     },
     log: 'info',
   });
 }
 
 module.exports.crawl = async (event, context, callback) => {
+  const elasticsearchClient = createElasticsearchClient();
   await launchChrome();
   const browser = await puppeteer.connect({
     browserWSEndpoint: (await CDP.Version()).webSocketDebuggerUrl
   });
-  const elasticsearchClient = createElasticsearchClient();
   for (let spot of SPOTS) {
     await spot.crawler.crawl(browser, elasticsearchClient);
   }
