@@ -13,7 +13,13 @@ library.add(faFutbol)
 library.add(faSearch)
 library.add(faSpinner)
 
-const SEARCH_API_URL = 'https://s2cjc5s8a0.execute-api.ap-northeast-1.amazonaws.com/prod/search';
+const API_BASE_URL = (() => {
+  if (window.location.hostname === 'localhost' || window.location.hostname.startsWith('192.168.')) {
+    return `${window.location.protocol}//${window.location.hostname}:4000`;
+  }
+  return 'https://s2cjc5s8a0.execute-api.ap-northeast-1.amazonaws.com/prod';
+})();
+const SEARCH_API_URL = API_BASE_URL + '/search';
 
 class App extends Component {
   constructor(props) {
