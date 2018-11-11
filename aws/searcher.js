@@ -11,30 +11,46 @@ class Searcher {
       type: 'courts',
       body: {
         query: {
-          nested: {
-            path: 'vacancies',
-            query: {
-              bool: {
-                must: [
-                  {
-                    range: {
-                      'vacancies.begin': {
-                        to: dateformat(begin, 'isoDateTime')
-                      }
-                    }
-                  },
-                  {
-                    range: {
-                      'vacancies.end': {
-                        from: dateformat(end, 'isoDateTime')
-                      }
+          bool: {
+            must: [
+              {
+                'geo_distance': {
+                  'distance': '100km',
+                  'location': {
+                    lat: lat,
+                    lon: lon
+                  }
+                }
+              },
+              {
+                nested: {
+                  path: 'vacancies',
+                  query: {
+                    bool: {
+                      must: [
+                        {
+                          range: {
+                            'vacancies.begin': {
+                              to: dateformat(begin, 'isoDateTime')
+                            }
+                          }
+                        },
+                        {
+                          range: {
+                            'vacancies.end': {
+                              from: dateformat(end, 'isoDateTime')
+                            }
+                          }
+                        }
+                      ]
                     }
                   }
-                ]
+                }
               }
-            }
+            ]
           }
         },
+        size: 30,
         collapse: {
           field: 'spot',
           inner_hits: {
