@@ -25,6 +25,10 @@ class SearchForm extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    this.props.onBeforeSubmit();
+    this.setState({
+      height: '0px',
+    });
     this._getCurrentPosition()
       .then(pos => [pos.coords.latitude, pos.coords.longitude])
       .catch(error => [DEFAULT_LAT, DEFAULT_LON])
@@ -36,9 +40,6 @@ class SearchForm extends Component {
           lat: pos[0],
           lon: pos[1],
         })
-        this.setState({
-          height: '0px',
-        });
       });
   }
 

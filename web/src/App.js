@@ -30,11 +30,14 @@ class App extends Component {
     };
   }
 
-  search(condition) {
+  prepareToSearch() {
     this.setState({
       spots: null,
       loading: true,
     });
+  }
+
+  search(condition) {
     axios.get(SEARCH_API_URL, {params: condition})
       .then(resp => {
         this.setState({
@@ -64,6 +67,7 @@ class App extends Component {
               className="App-logo-icon" />
           </div>
           <SearchForm
+            onBeforeSubmit={() => this.prepareToSearch()}
             onSubmit={condition => this.search(condition)} />
         </header>
         <SearchResult
