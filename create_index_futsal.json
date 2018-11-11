@@ -9,6 +9,9 @@
         "spot": {
           "type": "keyword"
         },
+        "location": {
+          "type": "geo_point"
+        },
         "vacancies": {
           "type": "nested",
           "properties": {

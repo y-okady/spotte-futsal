@@ -5,7 +5,7 @@ class Searcher {
     this.elasticsearchClient = elasticsearchClient;
   }
 
-  async search(begin, end) {
+  async search(begin, end, lat, lon) {
     return this.elasticsearchClient.search({
       index: 'futsal',
       type: 'courts',
@@ -45,7 +45,12 @@ class Searcher {
         },
         sort: [
           {
-            spot: 'asc'
+            '_geo_distance': {
+              'location': {
+                lat: lat,
+                lon: lon
+              }
+            }
           }
         ]
       }

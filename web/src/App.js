@@ -4,10 +4,10 @@ import './App.css';
 import SearchForm from './SearchForm';
 import SearchResult from './SearchResult';
 import axios from 'axios';
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFutbol, faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons'
-import ReactSVG from 'react-svg'
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFutbol, faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import ReactSVG from 'react-svg';
 
 library.add(faFutbol)
 library.add(faSearch)
@@ -25,15 +25,14 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      spots: [],
+      spots: null,
       loading: false,
-      searched: false,
     };
   }
 
   search(condition) {
     this.setState({
-      spots: [],
+      spots: null,
       loading: true,
     });
     axios.get(SEARCH_API_URL, {params: condition})
@@ -41,11 +40,13 @@ class App extends Component {
         this.setState({
           spots: resp.data,
           loading: false,
-          searched: true,
         })
       })
       .catch(error => {
-        console.error(error);
+        alert('検索できませんでした');
+        this.setState({
+          loading: false
+        });
       });
   }
 
@@ -62,10 +63,12 @@ class App extends Component {
               size="lg"
               className="App-logo-icon" />
           </div>
-          <SearchForm onSubmit={condition => this.search(condition)}/>
+          <SearchForm
+            onSubmit={condition => this.search(condition)} />
         </header>
-        {this.state.searched ?
-          <SearchResult spots={this.state.spots} loading={this.state.loading} /> : null}
+        <SearchResult
+          spots={this.state.spots}
+          loading={this.state.loading} />
       </div>
     );
   }

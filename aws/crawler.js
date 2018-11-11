@@ -1,8 +1,10 @@
 const dateformat = require('dateformat');
 
 class Crawler {
-  constructor(spot) {
+  constructor(spot, lat, lon) {
     this.spot = spot;
+    this.lat = lat;
+    this.lon = lon;
     this.courts = [];
     this.savedCourts = new Set();
     this.savedDates = new Set();
@@ -41,6 +43,10 @@ class Crawler {
           body: {
             spot: this.spot,
             date: dateformat(court.date, 'yyyy-mm-dd'),
+            location: {
+              lat: this.lat,
+              lon: this.lon
+            },
             court: court.name,
             order: court.order,
             vacancies: court.vacancies.map(vacancy => {
@@ -127,8 +133,8 @@ class Vacancy {
 }
 
 class VLCMCrawler extends Crawler {
-  constructor(spot, cid, isMonth) {
-    super(spot);
+  constructor(spot, lat, lon, cid, isMonth) {
+    super(spot, lat, lon);
     this.cid = cid;
     this.isMonth = Boolean(isMonth);
   }

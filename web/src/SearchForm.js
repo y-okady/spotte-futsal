@@ -5,6 +5,9 @@ import 'flatpickr/dist/themes/material_green.css'
 import Flatpickr from 'react-flatpickr';
 import moment from 'moment';
 
+const DEFAULT_LAT = 34.702485;
+const DEFAULT_LON = 135.495951;
+
 class SearchForm extends Component {
   constructor(props) {
     super(props);
@@ -14,16 +17,29 @@ class SearchForm extends Component {
     };
   }
 
+  _getCurrentPosition() {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+  }
+
   handleSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit({
-      date: this.state.datetime.format('YYYY-MM-DD'),
-      time: this.state.datetime.format('HH:mm'),
-      hour: this.state.hour,
-    })
-    this.setState({
-      height: '0px',
-    });
+    this._getCurrentPosition()
+      .then(pos => [pos.coords.latitude, pos.coords.longitude])
+      .catch(error => [DEFAULT_LAT, DEFAULT_LON])
+      .then(pos => {
+        this.props.onSubmit({
+          date: this.state.datetime.format('YYYY-MM-DD'),
+          time: this.state.datetime.format('HH:mm'),
+          hour: this.state.hour,
+          lat: pos[0],
+          lon: pos[1],
+        })
+        this.setState({
+          height: '0px',
+        });
+      });
   }
 
   handleHourChange = event => {

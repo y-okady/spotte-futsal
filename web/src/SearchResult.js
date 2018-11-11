@@ -8,9 +8,9 @@ class SearchResult extends Component {
       <div className="SearchResult">
         {this.props.loading ?
           <Loading className="SearchResult-loading" /> : null}
-        {!this.props.loading && this.props.spots.length === 0 ? 
+        {this.props.spots && this.props.spots.length === 0 ?
           <div class="SearchResult-noitem">予約できるコートが見つかりません。</div> : null}
-        {this.props.spots.map((spot, index) => {
+        {this.props.spots && this.props.spots.map((spot, index) => {
           return (
             <div key={`spot-${index}`} className="SearchResult-itemOuter">
               <div className="SearchResult-item">
