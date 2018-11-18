@@ -23,7 +23,7 @@ class Crawler {
   }
 
   async crawl(browser, elasticsearchClient) {
-    await Promise.all(this.getUrls().map(async url => await this.crawlOne(browser, url))).then(() => {
+    await Promise.all(this.getUrls().map(url => this.crawlOne(browser, url))).then(() => {
       elasticsearchClient.deleteByQuery({
         index: 'futsal',
         type: 'courts',

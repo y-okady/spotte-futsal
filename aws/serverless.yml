@@ -68,7 +68,7 @@ functions:
     handler: handler.crawl
     timeout: 900
     events:
-      - schedule: rate(30 minutes)
+      - schedule: cron(0 22-23,0-16 * * ? *)
   search:
     handler: handler.search
     timeout: 10
