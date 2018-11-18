@@ -1,0 +1,1 @@
+console.log(require('../aws/spot').SPOTS.length);
