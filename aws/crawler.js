@@ -6,8 +6,6 @@ class Crawler {
     this.lat = lat;
     this.lon = lon;
     this.courts = [];
-    this.savedCourts = new Set();
-    this.savedDates = new Set();
   }
 
   getUrl(date) {
@@ -23,6 +21,8 @@ class Crawler {
   }
 
   async crawl(browser, elasticsearchClient) {
+    console.log(`start crawling: ${this.spot}`);
+    const begin = new Date().getTime();
     await Promise.all(this.getUrls().map(url => this.crawlOne(browser, url))).then(() => {
       elasticsearchClient.deleteByQuery({
         index: 'futsal',
@@ -35,7 +35,6 @@ class Crawler {
           }
         }
       });
-      console.log(`delete all documents of "${this.spot}"`)
       this.courts.forEach(court => {
         elasticsearchClient.index({
           index: 'futsal',
@@ -58,53 +57,47 @@ class Crawler {
           }
         })
       });
-      console.log(`add ${this.courts.length} documents of "${this.spot}"`);
+      const end = Math.floor((new Date().getTime() - begin) / 1000);
+      console.log(`${end} seconds, ${this.courts.length} documents`);
     });
   }
 
   async crawlOne(browser, url) {
-    const page = await browser.newPage();
-    await page.goto(url, {
-      timeout: 30000,
-      waitUntil: 'networkidle0',
-    }).catch(error => {
-      // エラーが出ても無視する
-      console.log(`failed to load ${url}.`)
-    });
-    for (let court of await this.parse(page)) {
-      this.courts.push(court);
-      this.savedCourts.add(court.name);
-      this.savedDates.add(court.date.getTime());
-    }
-    await page.close();
-  }
-
-  static getDateFromMonthAndDay(month, day) {
-    const now = new Date();
-    const year = month - 1 >= now.getMonth() ? now.getFullYear() : now.getFullYear() + 1;
-    return new Date(year, month - 1, day);
+    return browser.newPage()
+      .then(page => {
+        return page.goto(url, {timeout: 30000, waitUntil: 'networkidle0'})
+          .catch(error => console.log(`failed to load ${url}.`)) // エラーが出ても無視する
+          .then(resp => page);
+      })
+      .then(page => {
+        return this.parse(page).then(items => {
+          page.close();
+          return items;
+        });
+      })
+      .then(items => {
+        items.forEach(item => {
+          const date = new Date(item.date);
+          if (!Crawler.isTargetDate(date)) {
+            return;
+          }
+          let court = Crawler.createCourt(item.name, item.order, date);
+          for (const vacancy of item.vacancies) {
+            court.addVacancy(new Date(vacancy.begin), new Date(vacancy.end));
+          }
+          this.courts.push(court);
+        });
+      });
   }
 
   static createCourt(name, order, date) {
     return new Court(name, order, date);
   }
 
-  isSavedDate(date) {
-    return this.savedDates.has(date.getTime());
-  }
-
   static isTargetDate(date) {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), now.getDate()) <= date
       && date < new Date(now.getFullYear(), now.getMonth(), now.getDate() + 60);
-  }
-
-  isValidDate(date) {
-    return !this.isSavedDate(date) && Crawler.isTargetDate(date);
-  }
-
-  static async getText(el) {
-    return (await el.getProperty('textContent')).jsonValue()
   }
 }
 
@@ -156,40 +149,44 @@ class VLCMCrawler extends Crawler {
   }
 
   async parse(page) {
-    let courts = [];
-    for (const table of await page.$$(('.yoyaku'))) {
-      const rows = await table.$$('tr');
-      const headerCells = await rows[0].$$('th');
-      const dateStr = await Crawler.getText(headerCells[0]);
-      const date = Crawler.getDateFromMonthAndDay(Number(dateStr.substr(0, 2)), Number(dateStr.substr(3, 2)));
-      if (!this.isValidDate(date)) {
-        continue;
-      }
+    const now = new Date();
+    return page.evaluate(() => {
+      const courts = [];
+      Array.from(document.querySelectorAll('.yoyaku')).forEach(table => {
+        const rows = Array.from(table.querySelectorAll('tr'));
+        const headerCells = Array.from(rows[0].querySelectorAll('th'));
 
-      const times = await Promise.all(headerCells.slice(1, -1).map(async cell => await Crawler.getText(cell)));
-      const timeSpan = Number(times[1].substr(3, 2)) - Number(times[0].substr(3, 2)) == 0 ? 1 : 0.5;
-      for (let i = 1; i < rows.length; i++) {
-        const cells = await rows[i].$$('td');
-        const name = await Crawler.getText(cells[0]);
-        let court = Crawler.createCourt(name, i, date);
-        let pos = 0;
-        for (const cell of cells.slice(1, -1)) {
-          const colspan = Number(await (await page.evaluateHandle(el => {
-            return el.getAttribute('colspan');
-          }, cell)).jsonValue()) || 1;
-          let className = await (await cell.getProperty('className')).jsonValue();
-          if (className.split(' ').includes('class_empty')) {
-            // 空き時間セル
-            let begin = new Date(date.getFullYear(), date.getMonth(), date.getDate(),
-              Number(times[pos].substr(0, 2)), Number(times[pos].substr(3, 2)));
-              court.addVacancy(begin, new Date(begin.getFullYear(), begin.getMonth(), begin.getDate(), begin.getHours() + timeSpan * colspan, begin.getMinutes()));
+        const dateStr = headerCells[0].textContent;
+        const month = Number(dateStr.substr(0, 2));
+        const day = Number(dateStr.substr(3, 2));
+        const year = month - 1 >= now.getMonth() ? now.getFullYear() : now.getFullYear() + 1;
+        const date = new Date(year, month - 1, day);
+
+        const times = headerCells.slice(1, -1).map(cell => cell.textContent);
+        const timeSpan = Number(times[1].substr(3, 2)) - Number(times[0].substr(3, 2)) == 0 ? 1 : 0.5;
+
+        let order = 0;
+        for (const row of rows.slice(1)) {
+          const cells = Array.from(row.querySelectorAll('td'));
+          let pos = 0;
+          const vacancies = [];
+          for (const cell of cells.slice(1, -1)) {
+            const colspan = Number(cell.getAttribute('colspan') || 1);
+            if (cell.classList.contains('class_empty')) {
+              // 空き時間セル
+              let begin = new Date(date.getFullYear(), date.getMonth(), date.getDate(),
+                Number(times[pos].substr(0, 2)), Number(times[pos].substr(3, 2)));
+              let end = new Date(begin.getFullYear(), begin.getMonth(), begin.getDate(),
+                begin.getHours() + timeSpan * colspan, begin.getMinutes());
+              vacancies.push({begin: begin.getTime(), end: end.getTime()});
+            }
+            pos += colspan;
           }
-          pos += colspan;
+          courts.push({name: cells[0].textContent, order: order++, date: date.getTime(), vacancies: vacancies});
         }
-        courts.push(court);
-      }
-    }
-    return courts;
+      });
+      return courts;
+    });
   }
 }
 
