@@ -74,4 +74,4 @@ class Searcher {
   }
 }
 
-module.exports.Searcher = Searcher;
+module.exports = { Searcher };

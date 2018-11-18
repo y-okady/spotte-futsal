@@ -3,7 +3,7 @@ const CDP = require('chrome-remote-interface');
 const puppeteer = require('puppeteer');
 const { SPOTS, SPOTS_MAP } = require('./spot');
 const elasticsearch = require('elasticsearch');
-const Searcher = require('./searcher').Searcher;
+const { Searcher } = require('./Searcher');
 
 const createElasticsearchClient = () => {
   return new elasticsearch.Client({

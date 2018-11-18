@@ -1,4 +1,4 @@
-const VLCMCrawler = require('./crawler').VLCMCrawler
+const { VLCMCrawler } = require('./crawler/VLCMCrawler');
 
 class Spot {
   constructor(spot, lat, lon, url, crawlerClass, ...crawlerParams) {
@@ -63,5 +63,4 @@ const SPOTS = [
 
 const SPOTS_MAP = Object.assign(...SPOTS.map(spot => ({[spot.spot]: spot})));
 
-module.exports.SPOTS = SPOTS;
-module.exports.SPOTS_MAP = SPOTS_MAP;
+module.exports = { SPOTS, SPOTS_MAP };
