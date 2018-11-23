@@ -18,7 +18,7 @@ const createElasticsearchClient = () => {
 };
 
 module.exports.crawl = async (event, context, callback) => { // eslint-disable-line no-unused-vars
-  launchChrome()
+  await launchChrome()
     .then(() => CDP.Version())
     .then(version => puppeteer.connect({browserWSEndpoint: version.webSocketDebuggerUrl}))
     .then(async browser => {
