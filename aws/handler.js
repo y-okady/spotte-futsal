@@ -71,3 +71,16 @@ module.exports.search = async (event, context, callback) => {
       });
     });
 };
+
+module.exports.deleteIndices = async (event, context, callback) => { // eslint-disable-line no-unused-vars
+  await createElasticsearchClient().deleteByQuery({
+    index: 'futsal',
+    type: 'courts',
+    body: {
+      query: {
+        match_all: {}
+      }
+    }
+  })
+    .then(() => console.log('delete indices'));
+};
