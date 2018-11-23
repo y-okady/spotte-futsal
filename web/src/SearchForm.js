@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import './SearchForm.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import 'flatpickr/dist/themes/material_green.css'
+import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Flatpickr from 'react-flatpickr';
 import moment from 'moment';
+import 'flatpickr/dist/themes/material_green.css';
+import './SearchForm.css';
 
+// 大阪駅
 const DEFAULT_LAT = 34.702485;
 const DEFAULT_LON = 135.495951;
 
@@ -23,7 +25,7 @@ class SearchForm extends Component {
     });
   }
 
-  handleSubmit = event => {
+  handleSubmit(event) {
     event.preventDefault();
     this.props.onBeforeSubmit();
     this.setState({
@@ -31,7 +33,7 @@ class SearchForm extends Component {
     });
     this._getCurrentPosition()
       .then(pos => [pos.coords.latitude, pos.coords.longitude])
-      .catch(error => [DEFAULT_LAT, DEFAULT_LON])
+      .catch(() => [DEFAULT_LAT, DEFAULT_LON])
       .then(pos => {
         this.props.onSubmit({
           date: this.state.datetime.format('YYYY-MM-DD'),
@@ -39,23 +41,23 @@ class SearchForm extends Component {
           hour: this.state.hour,
           lat: pos[0],
           lon: pos[1],
-        })
+        });
       });
   }
 
-  handleHourChange = event => {
+  handleHourChange(event) {
     this.setState({
       hour: event.target.value,
-    })
+    });
   }
 
-  handleDateTimeChange = event => {
+  handleDateTimeChange(event) {
     this.setState({
       datetime: moment(event[0])
-    })
+    });
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.setState({
       height: (window.innerHeight - 60) + 'px',
     });
@@ -67,21 +69,14 @@ class SearchForm extends Component {
         <h2 className="SearchForm-title" style={{display: this.state.titleDisplay}}>フットサルコート空き時間検索</h2>
         <form className="SearchForm-form" onSubmit={event => this.handleSubmit(event)}>
           <div className="SearchForm-inputs">
-            <Flatpickr
-              value={this.state.datetime.toDate()}
+            <Flatpickr value={this.state.datetime.toDate()} onChange={event => this.handleDateTimeChange(event)}
               options={{
                 enableTime: true,
                 time_24hr: true,
                 minuteIncrement: 30,
-              }}
-              onChange={this.handleDateTimeChange}
-            />
+              }} />
             <span>から</span>
-            <select
-              id="hour"
-              onChange={this.handleHourChange}
-              value={this.state.hour}
-            >
+            <select id="hour" value={this.state.hour} onChange={event => this.handleHourChange(event)}>
               <option value="1">1時間</option>
               <option value="1.5">1時間半</option>
               <option value="2">2時間</option>
@@ -96,12 +91,8 @@ class SearchForm extends Component {
             <span>予約できるコート</span>
           </div>
           <div className="SearchForm-buttons">
-            <button
-              type="submit"
-              className="SearchForm-button"
-            >
-              <FontAwesomeIcon icon="search" size="1x" />
-              検索する
+            <button type="submit" className="SearchForm-button">
+              <FontAwesomeIcon icon="search" size="1x" />検索する
             </button>
           </div>
         </form>
@@ -109,5 +100,10 @@ class SearchForm extends Component {
     );
   }
 }
+
+SearchForm.propTypes = {
+  onBeforeSubmit: PropTypes.func,
+  onSubmit: PropTypes.func,
+};
 
 export default SearchForm;

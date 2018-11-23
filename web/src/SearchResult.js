@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import Loading from './Loading';
 import './SearchResult.css';
+
+const GOOGLE_MAPS_API_KEY = 'AIzaSyB1vbtwJx0IRSdjIH6LfnQrU1wxoLHIYwk';
 
 class SearchResult extends Component {
   render() {
@@ -9,7 +12,7 @@ class SearchResult extends Component {
         {this.props.loading ?
           <Loading className="SearchResult-loading" /> : null}
         {this.props.spots && this.props.spots.length === 0 ?
-          <div class="SearchResult-noitem">予約できるコートが見つかりません。</div> : null}
+          <div className="SearchResult-noitem">予約できるコートが見つかりません。</div> : null}
         {this.props.spots && this.props.spots.map((spot, index) => {
           return (
             <div key={`spot-${index}`} className="SearchResult-itemOuter">
@@ -22,13 +25,8 @@ class SearchResult extends Component {
                   <a href={spot.bookingUrl} target="_blank" rel="noopener noreferrer">コートを予約する</a>
                 </div>
                 <div className="SearchResult-map">
-                  <iframe
-                    title="Google Maps"
-                    width="600"
-                    height="450"
-                    frameBorder="0"
-                    src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyB1vbtwJx0IRSdjIH6LfnQrU1wxoLHIYwk&q=${spot.spot}`}
-                    allowFullScreen />
+                  <iframe title="Google マップ" width="600" height="450" frameBorder="0" allowFullScreen
+                    src={`https://www.google.com/maps/embed/v1/place?key=${GOOGLE_MAPS_API_KEY}&q=${spot.spot}`} />
                 </div>
               </div>
             </div>
@@ -38,5 +36,10 @@ class SearchResult extends Component {
     );
   }
 }
+
+SearchResult.propTypes = {
+  loading: PropTypes.bool,
+  spots: PropTypes.array,
+};
 
 export default SearchResult;
