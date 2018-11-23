@@ -1,4 +1,5 @@
 const dateformat = require('dateformat');
+const TARGET_DAYS = 60;
 
 class Crawler {
   constructor(spot, lat, lon) {
@@ -8,7 +9,7 @@ class Crawler {
     this.courts = [];
   }
 
-  getUrl(date) {
+  getUrl(date) { // eslint-disable-line no-unused-vars
     throw new Error('Not implemented.');
   }
 
@@ -16,58 +17,73 @@ class Crawler {
     throw new Error('Not implemented.');
   }
 
-  async parse(page) {
+  async parse(page) { // eslint-disable-line no-unused-vars
     throw new Error('Not implemented.');
+  }
+
+  async _deleteAllCourts(elasticsearchClient) {
+    return elasticsearchClient.deleteByQuery({
+      index: 'futsal',
+      type: 'courts',
+      body: {
+        query: {
+          match: {
+            spot: this.spot
+          }
+        }
+      }
+    }).catch(error => console.log(error));
+  }
+
+  async _indexCourts(elasticsearchClient) {
+    const body = [];
+    this.courts.forEach(court => {
+      body.push({
+        index: {
+          _index: 'futsal',
+          _type: 'courts',
+        }
+      },
+      {
+        spot: this.spot,
+        date: dateformat(court.date, 'yyyy-mm-dd'),
+        location: {
+          lat: this.lat,
+          lon: this.lon
+        },
+        court: court.name,
+        order: court.order,
+        vacancies: court.vacancies.map(vacancy => {
+          return {
+            begin: dateformat(vacancy.begin, 'isoDateTime'),
+            end: dateformat(vacancy.end, 'isoDateTime'),
+          };
+        }),
+      });
+    });
+    return elasticsearchClient.bulk({
+      body: body,
+    }).catch(error => console.log(error));
   }
 
   async crawl(browser, elasticsearchClient) {
     console.log(`start crawling: ${this.spot}`);
     const begin = new Date().getTime();
-    await Promise.all(this.getUrls().map(url => this.crawlOne(browser, url))).then(() => {
-      elasticsearchClient.deleteByQuery({
-        index: 'futsal',
-        type: 'courts',
-        body: {
-          query: {
-            match: {
-              spot: this.spot
-            }
-          }
-        }
+    return Promise.all(this.getUrls().map(url => this.crawlOne(browser, url)))
+      .then(() => this._deleteAllCourts(elasticsearchClient))
+      .then(() => this._indexCourts(elasticsearchClient))
+      .then(() => {
+        const seconds = Math.floor((new Date().getTime() - begin) / 1000);
+        console.log(`${seconds} seconds, ${this.courts.length} documents`);
       });
-      this.courts.forEach(court => {
-        elasticsearchClient.index({
-          index: 'futsal',
-          type: 'courts',
-          body: {
-            spot: this.spot,
-            date: dateformat(court.date, 'yyyy-mm-dd'),
-            location: {
-              lat: this.lat,
-              lon: this.lon
-            },
-            court: court.name,
-            order: court.order,
-            vacancies: court.vacancies.map(vacancy => {
-              return {
-                begin: dateformat(vacancy.begin, 'isoDateTime'),
-                end: dateformat(vacancy.end, 'isoDateTime'),
-              };
-            }),
-          }
-        })
-      });
-      const end = Math.floor((new Date().getTime() - begin) / 1000);
-      console.log(`${end} seconds, ${this.courts.length} documents`);
-    });
   }
 
   async crawlOne(browser, url) {
     return browser.newPage()
       .then(page => {
         return page.goto(url, {timeout: 30000, waitUntil: 'networkidle0'})
-          .catch(error => console.log(`failed to load ${url}.`)) // エラーが出ても無視する
-          .then(resp => page);
+          .catch(() => console.log(`failed to load ${url}.`)) // エラーが出ても無視する
+          .then(() => page);
       })
       .then(page => {
         return this.parse(page).then(items => {
@@ -93,7 +109,7 @@ class Crawler {
   static isTargetDate(date) {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), now.getDate()) <= date
-      && date < new Date(now.getFullYear(), now.getMonth(), now.getDate() + 60);
+      && date < new Date(now.getFullYear(), now.getMonth(), now.getDate() + TARGET_DAYS);
   }
 }
 

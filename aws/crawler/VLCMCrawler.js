@@ -1,5 +1,5 @@
-const { Crawler } = require('./Crawler');
 const dateformat = require('dateformat');
+const { Crawler } = require('./Crawler');
 
 class VLCMCrawler extends Crawler {
   constructor(spot, lat, lon, cid, isMonth) {
@@ -28,7 +28,7 @@ class VLCMCrawler extends Crawler {
     const now = new Date();
     return page.evaluate(() => {
       const courts = [];
-      Array.from(document.querySelectorAll('.yoyaku')).forEach(table => {
+      Array.from(window.document.querySelectorAll('.yoyaku')).forEach(table => { // eslint-disable-line no-undef
         const rows = Array.from(table.querySelectorAll('tr'));
         const headerCells = Array.from(rows[0].querySelectorAll('th'));
 

@@ -1,8 +1,8 @@
 const launchChrome = require('@serverless-chrome/lambda');
 const CDP = require('chrome-remote-interface');
 const puppeteer = require('puppeteer');
-const { SPOTS, SPOTS_MAP } = require('./spot');
 const elasticsearch = require('elasticsearch');
+const { SPOTS, SPOTS_MAP } = require('./spot');
 const { Searcher } = require('./Searcher');
 
 const createElasticsearchClient = () => {
@@ -15,18 +15,19 @@ const createElasticsearchClient = () => {
     },
     log: 'info',
   });
-}
+};
 
-module.exports.crawl = async (event, context, callback) => {
-  const elasticsearchClient = createElasticsearchClient();
-  await launchChrome();
-  const browser = await puppeteer.connect({
-    browserWSEndpoint: (await CDP.Version()).webSocketDebuggerUrl
-  });
-  for (let spot of SPOTS) {
-    await spot.crawler.crawl(browser, elasticsearchClient);
-  }
-  await browser.close();
+module.exports.crawl = async (event, context, callback) => { // eslint-disable-line no-unused-vars
+  launchChrome()
+    .then(() => CDP.Version())
+    .then(version => puppeteer.connect({browserWSEndpoint: version.webSocketDebuggerUrl}))
+    .then(async browser => {
+      for (let spot of SPOTS) {
+        await spot.crawler.crawl(browser, createElasticsearchClient());
+      }
+      return browser;
+    })
+    .then(browser => browser.close());
 };
 
 module.exports.search = async (event, context, callback) => {
@@ -60,11 +61,13 @@ module.exports.search = async (event, context, callback) => {
           'Access-Control-Allow-Credentials': true,
         },
         body: JSON.stringify(hits),
-      })})
+      });
+    })
     .catch(err => {
       console.log(err.message);
       callback(null, {
         statusCode: 400,
         body: err.message
-      })});
+      });
+    });
 };
