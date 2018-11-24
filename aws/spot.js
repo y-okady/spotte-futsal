@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { ToDoCrawler, UnsupportedCrawler } = require('./crawler/Crawler'); // eslint-disable-line no-unused-vars
 const { VLCMCrawler } = require('./crawler/VLCMCrawler'); // eslint-disable-line no-unused-vars
 
 class Spot {

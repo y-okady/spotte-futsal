@@ -113,6 +113,18 @@ class Crawler {
   }
 }
 
+class ToDoCrawler extends Crawler {
+  async crawl(browser, elasticsearchClient) { // eslint-disable-line no-unused-vars
+    console.log(`ToDo: ${this.spot}`);
+  }
+}
+
+class UnsupportedCrawler extends Crawler {
+  async crawl(browser, elasticsearchClient) { // eslint-disable-line no-unused-vars
+    console.log(`not supported: ${this.spot}`);
+  }
+}
+
 class Court {
   constructor(name, order, date) {
     this.name = name;
@@ -137,4 +149,4 @@ class Vacancy {
   }
 }
 
-module.exports = { Crawler };
+module.exports = { Crawler, ToDoCrawler, UnsupportedCrawler };
