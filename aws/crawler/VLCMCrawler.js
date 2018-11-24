@@ -25,8 +25,8 @@ class VLCMCrawler extends Crawler {
   }
 
   async parse(page) {
-    const now = new Date();
     return page.evaluate(() => {
+      const now = new Date();
       const courts = [];
       Array.from(window.document.querySelectorAll('.yoyaku')).forEach(table => { // eslint-disable-line no-undef
         const rows = Array.from(table.querySelectorAll('tr'));
@@ -35,7 +35,7 @@ class VLCMCrawler extends Crawler {
         const dateStr = headerCells[0].textContent;
         const month = Number(dateStr.substr(0, 2));
         const day = Number(dateStr.substr(3, 2));
-        const year = month - 1 >= now.getMonth() ? now.getFullYear() : now.getFullYear() + 1;
+        const year = month >= now.getMonth() + 1 ? now.getFullYear() : now.getFullYear() + 1;
         const date = new Date(year, month - 1, day);
 
         const times = headerCells.slice(1, -1).map(cell => cell.textContent);
@@ -58,7 +58,12 @@ class VLCMCrawler extends Crawler {
             }
             pos += colspan;
           }
-          courts.push({name: cells[0].textContent, order: order++, date: date.getTime(), vacancies: vacancies});
+          courts.push({
+            name: cells[0].textContent,
+            order: order++,
+            date: date.getTime(),
+            vacancies: vacancies
+          });
         }
       });
       return courts;
