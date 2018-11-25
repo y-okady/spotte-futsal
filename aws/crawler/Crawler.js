@@ -1,5 +1,4 @@
 const dateformat = require('dateformat');
-const TARGET_DAYS = 60;
 
 class Crawler {
   constructor(spot, lat, lon) {
@@ -83,9 +82,14 @@ class Crawler {
       if (!this.courts.has(court.name)) {
         this.courts.set(court.name, new Court(court.name, court.order));
       }
+      let savedVacancies = new Set();
       court.vacancies
         .filter(vacancy => Crawler.isTargetDate(new Date(vacancy.begin)))
-        .forEach(vacancy => this.courts.get(court.name).addVacancy(new Date(vacancy.begin), new Date(vacancy.end)));
+        .filter(vacancy => !savedVacancies.has(vacancy.begin))
+        .forEach(vacancy => {
+          savedVacancies.add(vacancy.begin);
+          this.courts.get(court.name).addVacancy(new Date(vacancy.begin), new Date(vacancy.end));
+        });
     }
     await page.close();
   }
@@ -93,7 +97,7 @@ class Crawler {
   static isTargetDate(date) {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), now.getDate()) <= date
-      && date < new Date(now.getFullYear(), now.getMonth(), now.getDate() + TARGET_DAYS);
+      && date < new Date(now.getFullYear(), now.getMonth(), now.getDate() + Crawler.TARGET_DAYS);
   }
 }
 
@@ -132,4 +136,5 @@ class Vacancy {
   }
 }
 
+Crawler.TARGET_DAYS = 60;
 module.exports = { Crawler, ToDoCrawler, UnsupportedCrawler };

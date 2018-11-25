@@ -2,10 +2,10 @@ const dateformat = require('dateformat');
 const { Crawler } = require('./Crawler');
 
 class VLCMCrawler extends Crawler {
-  constructor(spot, lat, lon, cid, isMonth) {
+  constructor(spot, lat, lon, cid, weeksPerPage) {
     super(spot, lat, lon);
     this.cid = cid;
-    this.isMonth = Boolean(isMonth);
+    this.weeksPerPage = weeksPerPage ? Number(weeksPerPage) : 1;
   }
 
   getUrl(date) {
@@ -13,13 +13,9 @@ class VLCMCrawler extends Crawler {
   }
 
   getUrls() {
-    // 月表示の場合、今日から1ヶ月、4週間後から1ヶ月、8週間後(56日後)から1ヶ月の3画面をチェックする
-    // 週表示の場合、今日から1週間、1週間後から1週間、...、8週間後(56日後) から1週間の9画面をチェックする
-    const weeksInterval = this.isMonth ? 4 : 1;
-    const rangeMax = this.isMonth ? 3 : 9;
-    return [...Array(rangeMax).keys()].map(x => {
+    return [...Array(Math.ceil(Crawler.TARGET_DAYS / 7 / this.weeksPerPage)).keys()].map(x => {
       let date = new Date();
-      date.setDate(date.getDate() + x * weeksInterval * 7);
+      date.setDate(date.getDate() + x * this.weeksPerPage * 7);
       return this.getUrl(date);
     });
   }
