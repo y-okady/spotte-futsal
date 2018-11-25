@@ -18,16 +18,14 @@ const createElasticsearchClient = () => {
 };
 
 module.exports.crawl = async (event, context, callback) => { // eslint-disable-line no-unused-vars
-  await launchChrome()
-    .then(() => CDP.Version())
-    .then(version => puppeteer.connect({browserWSEndpoint: version.webSocketDebuggerUrl}))
-    .then(async browser => {
-      for (let spot of SPOTS) {
-        await spot.crawler.crawl(browser, createElasticsearchClient());
-      }
-      return browser;
-    })
-    .then(browser => browser.close());
+  await launchChrome();
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: (await CDP.Version()).webSocketDebuggerUrl
+  });
+  for (let spot of SPOTS) {
+    await spot.crawler.crawl(browser, createElasticsearchClient());
+  }
+  await browser.close();
 };
 
 module.exports.search = async (event, context, callback) => {
@@ -72,7 +70,7 @@ module.exports.search = async (event, context, callback) => {
     });
 };
 
-module.exports.deleteIndices = async (event, context, callback) => { // eslint-disable-line no-unused-vars
+module.exports.deleteDocuments = async (event, context, callback) => { // eslint-disable-line no-unused-vars
   await createElasticsearchClient().deleteByQuery({
     index: 'futsal',
     type: 'courts',
@@ -82,5 +80,41 @@ module.exports.deleteIndices = async (event, context, callback) => { // eslint-d
       }
     }
   })
-    .then(() => console.log('delete indices'));
+    .then(() => console.log('delete documents'));
+};
+
+module.exports.initIndex = async (event, context, callback) => { // eslint-disable-line no-unused-vars
+  const elasticsearchClient = createElasticsearchClient();
+  await elasticsearchClient.indices.delete({
+    index: 'futsal'
+  }).then(() => elasticsearchClient.indices.create({
+    index: 'futsal',
+    body: {
+      mappings: {
+        courts: {
+          properties: {
+            spot: {
+              type: 'keyword'
+            },
+            location: {
+              type: 'geo_point'
+            },
+            vacancies: {
+              type: 'nested',
+              properties: {
+                begin: {
+                  type: 'date',
+                  format: 'date_optional_time'
+                },
+                end: {
+                  type: 'date',
+                  format: 'date_optional_time'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }));
 };

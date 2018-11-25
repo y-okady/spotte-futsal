@@ -43,7 +43,6 @@ class FCJapanCrawler extends Crawler {
           courts.push({
             name: courtCell.textContent,
             order: order,
-            date: date.getTime(),
             vacancies: Array.from(row.querySelectorAll('a[href^="faci_signup.php"]')).map(el => {
               const params = new URLSearchParams(el.search);
               let begin = new Date(date.getFullYear(), date.getMonth(), date.getDate(),

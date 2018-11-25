@@ -61,7 +61,6 @@ class VLCMCrawler extends Crawler {
           courts.push({
             name: cells[0].textContent,
             order: order++,
-            date: date.getTime(),
             vacancies: vacancies
           });
         }

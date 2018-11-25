@@ -6,7 +6,7 @@ class Crawler {
     this.spot = spot;
     this.lat = lat;
     this.lon = lon;
-    this.courts = [];
+    this.courts = new Map();
   }
 
   getUrl(date) { // eslint-disable-line no-unused-vars
@@ -46,7 +46,6 @@ class Crawler {
       },
       {
         spot: this.spot,
-        date: dateformat(court.date, 'yyyy-mm-dd'),
         location: {
           lat: this.lat,
           lon: this.lon
@@ -69,41 +68,26 @@ class Crawler {
   async crawl(browser, elasticsearchClient) {
     console.log(`start crawling: ${this.spot}`);
     const begin = new Date().getTime();
-    return Promise.all(this.getUrls().map(url => this.crawlOne(browser, url)))
-      .then(() => this._deleteAllCourts(elasticsearchClient))
-      .then(() => this._indexCourts(elasticsearchClient))
-      .then(() => {
-        const seconds = Math.floor((new Date().getTime() - begin) / 1000);
-        console.log(`${seconds} seconds, ${this.courts.length} documents`);
-      });
+    return Promise.all(this.getUrls().map(url => this.crawlOne(browser, url))).then(async () => {
+      await this._deleteAllCourts(elasticsearchClient);
+      await this._indexCourts(elasticsearchClient);
+      const seconds = Math.floor((new Date().getTime() - begin) / 1000);
+      console.log(`${seconds} seconds, ${this.courts.size} courts`);
+    });
   }
 
   async crawlOne(browser, url) {
-    return browser.newPage()
-      .then(page => {
-        return page.goto(url, {timeout: 30000, waitUntil: 'networkidle0'})
-          .catch(() => console.log(`failed to load ${url}.`)) // エラーが出ても無視する
-          .then(() => page);
-      })
-      .then(page => {
-        return this.parse(page).then(items => {
-          page.close();
-          return items;
-        });
-      })
-      .then(items => {
-        items.forEach(item => {
-          const date = new Date(item.date);
-          if (!Crawler.isTargetDate(date)) {
-            return;
-          }
-          let court = new Court(item.name, item.order, date);
-          for (const vacancy of item.vacancies) {
-            court.addVacancy(new Date(vacancy.begin), new Date(vacancy.end));
-          }
-          this.courts.push(court);
-        });
-      });
+    const page = await browser.newPage();
+    await page.goto(url, {timeout: 30000, waitUntil: 'load'});
+    for (const court of await this.parse(page)) {
+      if (!this.courts.has(court.name)) {
+        this.courts.set(court.name, new Court(court.name, court.order));
+      }
+      court.vacancies
+        .filter(vacancy => Crawler.isTargetDate(new Date(vacancy.begin)))
+        .forEach(vacancy => this.courts.get(court.name).addVacancy(new Date(vacancy.begin), new Date(vacancy.end)));
+    }
+    await page.close();
   }
 
   static isTargetDate(date) {
@@ -126,10 +110,9 @@ class UnsupportedCrawler extends Crawler {
 }
 
 class Court {
-  constructor(name, order, date) {
+  constructor(name, order) {
     this.name = name;
     this.order = order;
-    this.date = date;
     this.vacancies = [];
   }
 
