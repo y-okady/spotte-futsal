@@ -59,6 +59,9 @@ class Crawler {
         }),
       });
     });
+    if (body.length === 0) {
+      return Promise.resolve();
+    }
     return elasticsearchClient.bulk({
       body: body,
     }).catch(error => console.log(error));
@@ -77,7 +80,7 @@ class Crawler {
 
   async crawlOne(browser, url) {
     const page = await browser.newPage();
-    return page.goto(url, {timeout: 20000, waitUntil: 'load'})
+    return page.goto(url, {timeout: 90000, waitUntil: 'load'})
       .then(async () => {
         for (const court of await this.parse(page)) {
           if (!this.courts.has(court.name)) {
@@ -92,8 +95,11 @@ class Crawler {
               this.courts.get(court.name).addVacancy(new Date(vacancy.begin), new Date(vacancy.end));
             });
         }
+      }).catch(error => {
+        console.log(error);
+      }).then(() => {
         return page.close();
-      }).catch(error => console.log(error));
+      });
   }
 
   static isTargetDate(date) {
