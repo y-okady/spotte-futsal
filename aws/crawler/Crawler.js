@@ -77,21 +77,23 @@ class Crawler {
 
   async crawlOne(browser, url) {
     const page = await browser.newPage();
-    await page.goto(url, {timeout: 30000, waitUntil: 'load'});
-    for (const court of await this.parse(page)) {
-      if (!this.courts.has(court.name)) {
-        this.courts.set(court.name, new Court(court.name, court.order));
-      }
-      let savedVacancies = new Set();
-      court.vacancies
-        .filter(vacancy => Crawler.isTargetDate(new Date(vacancy.begin)))
-        .filter(vacancy => !savedVacancies.has(vacancy.begin))
-        .forEach(vacancy => {
-          savedVacancies.add(vacancy.begin);
-          this.courts.get(court.name).addVacancy(new Date(vacancy.begin), new Date(vacancy.end));
-        });
-    }
-    await page.close();
+    return page.goto(url, {timeout: 10000, waitUntil: 'load'})
+      .then(async () => {
+        for (const court of await this.parse(page)) {
+          if (!this.courts.has(court.name)) {
+            this.courts.set(court.name, new Court(court.name, court.order));
+          }
+          let savedVacancies = new Set();
+          court.vacancies
+            .filter(vacancy => Crawler.isTargetDate(new Date(vacancy.begin)))
+            .filter(vacancy => !savedVacancies.has(vacancy.begin))
+            .forEach(vacancy => {
+              savedVacancies.add(vacancy.begin);
+              this.courts.get(court.name).addVacancy(new Date(vacancy.begin), new Date(vacancy.end));
+            });
+        }
+        await page.close();
+      }).catch(error => console.log(error));
   }
 
   static isTargetDate(date) {

@@ -24,10 +24,14 @@ module.exports.crawl = async (event, context, callback) => { // eslint-disable-l
   const browser = await puppeteer.connect({
     browserWSEndpoint: (await CDP.Version()).webSocketDebuggerUrl
   });
+  console.log('start');
+  const begin = new Date().getTime();
   for (let spot of SPOTS) {
     await spot.crawler.crawl(browser, createElasticsearchClient());
   }
   await browser.close();
+  const seconds = Math.floor((new Date().getTime() - begin) / 1000);
+  console.log(`end: ${seconds} seconds`);
 };
 
 module.exports.search = async (event, context, callback) => {

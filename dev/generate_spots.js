@@ -2,7 +2,7 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
-const LAST_CELL = 'H91';
+const LAST_CELL = 'H126';
 axios.get(`https://sheets.googleapis.com/v4/spreadsheets/1sBX5Vv-GIs9u4YYsRGHFW5jm-htex98i3CpT6J0ti9s/values/A1:${LAST_CELL}?key=AIzaSyAxXvINR16iBrOrLnoGXxHhdkbz7CPyk9U`)
   .then(resp => resp.data.values.map(row => ({
     spot: row[1],
