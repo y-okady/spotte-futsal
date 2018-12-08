@@ -92,7 +92,7 @@ class Crawler {
               this.courts.get(court.name).addVacancy(new Date(vacancy.begin), new Date(vacancy.end));
             });
         }
-        await page.close();
+        return page.close();
       }).catch(error => console.log(error));
   }
 
