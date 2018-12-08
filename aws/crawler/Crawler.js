@@ -77,7 +77,7 @@ class Crawler {
 
   async crawlOne(browser, url) {
     const page = await browser.newPage();
-    return page.goto(url, {timeout: 10000, waitUntil: 'load'})
+    return page.goto(url, {timeout: 20000, waitUntil: 'load'})
       .then(async () => {
         for (const court of await this.parse(page)) {
           if (!this.courts.has(court.name)) {

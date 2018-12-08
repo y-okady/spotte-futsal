@@ -18,6 +18,8 @@ const createElasticsearchClient = () => {
 };
 
 module.exports.crawl = async (event, context, callback) => { // eslint-disable-line no-unused-vars
+  const offset = event.hasOwnProperty('offset') ? Number(event.offset) : 500;
+  const limit = event.hasOwnProperty('limit') ? Number(event.limit) : 0;
   await launchChrome({
     flags: ['--headless']
   });
@@ -26,7 +28,7 @@ module.exports.crawl = async (event, context, callback) => { // eslint-disable-l
   });
   console.log('start');
   const begin = new Date().getTime();
-  for (let spot of SPOTS) {
+  for (let spot of SPOTS.slice(offset, offset + limit)) {
     await spot.crawler.crawl(browser, createElasticsearchClient());
   }
   await browser.close();
