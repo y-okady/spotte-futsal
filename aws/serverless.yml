@@ -72,13 +72,18 @@ functions:
       - schedule:
           rate: cron(0 22-23,0-16 * * ? *)
           input:
-            offset: 0
-            limit: 100
+            begin: 0
+            end: 100
       - schedule:
-          rate: cron(30 22-23,0-16 * * ? *)
+          rate: cron(20 22-23,0-16 * * ? *)
           input:
-            offset: 100
-            limit: 100
+            begin: 100
+            end: 150
+      - schedule:
+          rate: cron(40 22-23,0-16 * * ? *)
+          input:
+            begin: 150
+            end: 200
   search:
     handler: handler.search
     timeout: 10

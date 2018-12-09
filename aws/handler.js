@@ -18,22 +18,18 @@ const createElasticsearchClient = () => {
 };
 
 module.exports.crawl = async (event, context, callback) => { // eslint-disable-line no-unused-vars
-  const offset = event.hasOwnProperty('offset') ? Number(event.offset) : 500;
-  const limit = event.hasOwnProperty('limit') ? Number(event.limit) : 0;
+  const begin = event.hasOwnProperty('begin') ? Number(event.begin) : 0;
+  const end = event.hasOwnProperty('end') ? Number(event.end) : 1000;
   await launchChrome({
     flags: ['--headless']
   });
   const browser = await puppeteer.connect({
     browserWSEndpoint: (await CDP.Version()).webSocketDebuggerUrl
   });
-  console.log('start');
-  const begin = new Date().getTime();
-  for (let spot of SPOTS.slice(offset, offset + limit)) {
+  for (let spot of SPOTS.slice(begin, end)) {
     await spot.crawler.crawl(browser, createElasticsearchClient());
   }
   await browser.close();
-  const seconds = Math.floor((new Date().getTime() - begin) / 1000);
-  console.log(`end: ${seconds} seconds`);
 };
 
 module.exports.search = async (event, context, callback) => {
