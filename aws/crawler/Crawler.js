@@ -5,6 +5,7 @@ class Crawler {
     this.spot = spot;
     this.lat = lat;
     this.lon = lon;
+    this.weeksPerPage = 1;
     this.courts = new Map();
   }
 
@@ -13,7 +14,11 @@ class Crawler {
   }
 
   getUrls() {
-    throw new Error('Not implemented.');
+    return [...Array(Math.ceil(Crawler.TARGET_DAYS / 7 / this.weeksPerPage)).keys()].map(x => {
+      let date = new Date();
+      date.setDate(date.getDate() + x * this.weeksPerPage * 7);
+      return this.getUrl(date);
+    });
   }
 
   async parse(page) { // eslint-disable-line no-unused-vars

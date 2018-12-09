@@ -11,14 +11,6 @@ class FCJapanCrawler extends Crawler {
     return `https://yoyaku.fcjapan.jp/team/scripts/user/faci_schedule.php?faci_id=${this.faciId}&date=${dateformat(date, 'yyyy-mm-dd')}`;
   }
 
-  getUrls() {
-    return [...Array(10).keys()].map(x => {
-      let date = new Date();
-      date.setDate(date.getDate() + x * 7);
-      return this.getUrl(date);
-    });
-  }
-
   async parse(page) {
     return page.evaluate(() => {
       const now = new Date();

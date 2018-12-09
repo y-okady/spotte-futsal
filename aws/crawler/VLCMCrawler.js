@@ -5,19 +5,13 @@ class VLCMCrawler extends Crawler {
   constructor(spot, lat, lon, cid, weeksPerPage) {
     super(spot, lat, lon);
     this.cid = cid;
-    this.weeksPerPage = weeksPerPage ? Number(weeksPerPage) : 1;
+    if (weeksPerPage) {
+      this.weeksPerPage = Number(weeksPerPage);
+    }
   }
 
   getUrl(date) {
     return `http://www.vlcm.net/rc/pc/index.php?action_CRA01_01do=true&cid=${this.cid}&executeType=selectDate&selectDate=${dateformat(date, 'yyyymmdd')}`;
-  }
-
-  getUrls() {
-    return [...Array(Math.ceil(Crawler.TARGET_DAYS / 7 / this.weeksPerPage)).keys()].map(x => {
-      let date = new Date();
-      date.setDate(date.getDate() + x * this.weeksPerPage * 7);
-      return this.getUrl(date);
-    });
   }
 
   async parse(page) {
